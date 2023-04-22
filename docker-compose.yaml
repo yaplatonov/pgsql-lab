@@ -20,6 +20,8 @@ services:
   pg-replica:
     image: bitnami/postgresql
     restart: always
+    depends_on:
+      - pg-main
     environment:
       
       POSTGRESQL_REPLICATION_MODE: slave
