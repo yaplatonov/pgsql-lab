@@ -1,0 +1,43 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  pg-main:
+    image: bitnami/postgresql
+    restart: always
+    environment:
+      POSTGRESQL_REPLICATION_MODE: master
+      POSTGRESQL_USERNAME: my_user
+      POSTGRESQL_PASSWORD: password123
+      POSTGRESQL_DATABASE: my_database
+      POSTGRESQL_REPLICATION_USER: my_repl_user
+      POSTGRESQL_REPLICATION_PASSWORD: my_repl_password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - './pg-main:/var/lib/postgresql/data/pgdata'
+
+  pg-replica:
+    image: bitnami/postgresql
+    restart: always
+    environment:
+      
+      POSTGRESQL_REPLICATION_MODE: slave
+      POSTGRESQL_USERNAME: my_user
+      POSTGRESQL_PASSWORD: password123
+      POSTGRESQL_MASTER_HOST: pg-main
+      # POSTGRESQL_MASTER_PORT_NUMBER: 5432
+      POSTGRESQL_REPLICATION_USER: my_repl_user
+      POSTGRESQL_REPLICATION_PASSWORD: my_repl_password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - './pg-replica:/var/lib/postgresql/data/pgdata'
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  debug:
+    image: wbitt/network-multitool
